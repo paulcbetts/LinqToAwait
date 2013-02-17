@@ -21,24 +21,22 @@ namespace LinqToAwait
 
         public static IObservable<T> WhereAsync<T>(this IObservable<T> This, Func<T, Task<bool>> filter)
         {
-            return This.Select(x => {
-                return filter(x).ToObservable()
-                    .SelectMany(cond => cond ? Observable.Return(x) : Observable.Empty<T>());
-            }).Concat();
+            return This.Select(x => filter(x).ToObservable()
+                                             .SelectMany(cond => cond ? Observable.Return(x) : Observable.Empty<T>())).Concat();
         }
 
         public static IObservable<bool> AllAsync<T>(this IObservable<T> This, Func<T, Task<bool>> filter)
         {
             return This
                 .SelectMany(x => filter(x).ToObservable())
-                .All(x => x != false);
+                .All(x => x);
         }
 
         public static IObservable<bool> AnyAsync<T>(this IObservable<T> This, Func<T, Task<bool>> filter)
         {
             return This
                 .SelectMany(x => filter(x).ToObservable())
-                .Any(x => x != false);
+                .Any(x => x);
         }
 
         public static IObservable<T> AsAsync<T>(this IEnumerable<T> This)
